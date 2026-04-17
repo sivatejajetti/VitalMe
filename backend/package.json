@@ -1,0 +1,23 @@
+{
+  "name": "vitalme-backend",
+  "version": "1.0.0",
+  "description": "Production-ready backend for VitalMe Health Tracking",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@supabase/supabase-js": "^2.103.0",
+    "axios": "^1.15.0",
+    "connect-pg-simple": "^10.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "express-session": "^1.19.0",
+    "googleapis": "^129.0.0",
+    "node-cache": "^5.1.2",
+    "pg": "^8.20.0"
+  }
+}
