@@ -2,15 +2,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Footprints, Moon, HeartPulse, Flame, X, Dumbbell, Droplets, Smile, Timer } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getHistoryData } from "@/services/api";
+import { HistoryItem } from "@/types";
 import { useState } from "react";
 
 const History = () => {
-  const { data: historyData, isLoading } = useQuery({
+  const { data: historyData, isLoading } = useQuery<HistoryItem[]>({
     queryKey: ["historyData"],
     queryFn: getHistoryData,
   });
 
-  const [selected, setSelected] = useState<any | null>(null);
+  const [selected, setSelected] = useState<HistoryItem | null>(null);
 
   if (isLoading) {
     return (
@@ -34,7 +35,7 @@ const History = () => {
       </motion.div>
 
       <div className="space-y-3">
-        {data.map((d: any, i: number) => (
+        {data.map((d: HistoryItem, i: number) => (
           <motion.button
             key={d.date}
             initial={{ opacity: 0, y: 10 }}

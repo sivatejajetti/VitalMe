@@ -4,10 +4,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getUserProfile } from "@/services/api";
+import { UserProfile } from "@/types";
 
 const SettingsPage = () => {
   const navigate = useNavigate();
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading } = useQuery<UserProfile>({
     queryKey: ["userProfile"],
     queryFn: getUserProfile,
   });
@@ -35,8 +36,8 @@ const SettingsPage = () => {
         <div className="h-24 bg-gradient-to-r from-primary to-primary-container relative">
           <div className="absolute -bottom-10 left-6">
             <div className="w-24 h-24 rounded-3xl bg-surface p-1 shadow-xl">
-              {profile?.photo ? (
-                <img src={profile.photo} alt="Avatar" className="w-full h-full rounded-[1.25rem] object-cover" />
+              {profile?.picture ? (
+                <img src={profile.picture} alt="Avatar" className="w-full h-full rounded-[1.25rem] object-cover" />
               ) : (
                 <div className="w-full h-full rounded-[1.25rem] bg-secondary flex items-center justify-center">
                   <User className="w-10 h-10 text-muted-foreground" />

@@ -4,14 +4,7 @@ import { Plus, CheckCircle2, Circle, Trash2, Calendar, Zap, ListTodo, Cloud } fr
 import { getTasks, syncTasks, deleteTask as apiDeleteTask } from "@/services/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-
-interface Task {
-  id: string;
-  text: string;
-  completed: boolean;
-  type: "habit" | "todo";
-  streak?: number;
-}
+import { Task } from "@/types";
 
 const Tasks = () => {
   const queryClient = useQueryClient();

@@ -4,12 +4,13 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tool
 import { useQuery } from "@tanstack/react-query";
 import { getWeeklyAnalytics } from "@/services/api";
 import { TrendingUp, TrendingDown, Target, Brain, Droplets } from "lucide-react";
+import { HistoryItem } from "@/types";
 
 const tooltipStyle = { background: "hsl(220 25% 10%)", border: "1px solid hsl(220 15% 20%)", borderRadius: 12, color: "hsl(160 100% 95%)", boxShadow: "0 10px 40px -10px rgba(0,0,0,0.5)" };
 
 const Analytics = () => {
   const [range, setRange] = useState<number>(7);
-  const { data: weeklyData, isLoading, isPlaceholderData } = useQuery({
+  const { data: weeklyData, isLoading } = useQuery<HistoryItem[]>({
     queryKey: ["weeklyAnalytics", range],
     queryFn: () => getWeeklyAnalytics(range),
     staleTime: 600000, // 10 minutes (App will remember charts instantly)

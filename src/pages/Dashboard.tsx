@@ -4,6 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recha
 import MetricCard from "@/components/MetricCard";
 import { useQuery } from "@tanstack/react-query";
 import { getHealthData } from "@/services/api";
+import { HealthData } from "@/types";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -11,7 +12,7 @@ const Dashboard = () => {
   const [syncing, setSyncing] = useState(false);
   const navigate = useNavigate();
 
-  const { data: healthData, isLoading, refetch } = useQuery({
+  const { data: healthData, isLoading, refetch } = useQuery<HealthData>({
     queryKey: ["healthData"],
     queryFn: getHealthData,
     refetchInterval: 60000, // Sync every minute
@@ -65,7 +66,7 @@ const Dashboard = () => {
   const metrics = [
     { title: "Steps", value: (healthData?.steps || 0).toLocaleString(), unit: "steps", icon: <Footprints className="w-5 h-5" />, progress: Math.min(((healthData?.steps || 0) / 10000) * 100, 100) },
     { title: "Sleep", value: healthData?.sleep || 0, unit: "hrs", icon: <Moon className="w-5 h-5" />, progress: Math.min(((healthData?.sleep || 0) / 8) * 100, 100) },
-    { title: "Heart Rate", value: healthData?.heartRate || 0, unit: "bpm", icon: <HeartPulse className="w-5 h-5" />, progress: 100 },
+    { title: "Heart Rate", value: healthData?.heart_rate || 0, unit: "bpm", icon: <HeartPulse className="w-5 h-5" />, progress: 100 },
     { title: "Calories", value: (healthData?.calories || 0).toLocaleString(), unit: "kcal", icon: <Flame className="w-5 h-5" />, progress: Math.min(((healthData?.calories || 0) / 2500) * 100, 100) },
   ];
 

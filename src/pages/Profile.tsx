@@ -3,11 +3,12 @@ import { useState, useEffect } from "react";
 import { User, Scale, Ruler, Calendar, UserRound, Save, BadgeCheck } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getUserProfile, updateUserProfile } from "@/services/api";
+import { UserProfile } from "@/types";
 import { toast } from "sonner";
 
 const Profile = () => {
   const queryClient = useQueryClient();
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading } = useQuery<UserProfile>({
     queryKey: ["profile"],
     queryFn: getUserProfile,
   });

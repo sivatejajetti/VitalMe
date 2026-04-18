@@ -24,8 +24,9 @@ const Workout = () => {
       setCameraStream(stream);
       setCountdown(5);
       setReps(0);
-    } catch (err: any) {
-      toast.error("Camera access failed: " + err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Camera synchronization failed";
+      toast.error("Camera access failed: " + message);
     }
   };
 

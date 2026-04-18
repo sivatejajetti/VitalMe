@@ -1,14 +1,30 @@
 import React, { useEffect, useRef, useState } from "react";
-import { calculateAngle, detectPushupRep, PushupState } from "@/services/poseDetection";
+import type { Pose, Results, LandmarkList } from "@mediapipe/pose";
+
+// Define the connection list type manually as an array of index pairs
+export type ConnectorList = [number, number][];
+
+import { detectPushupRep, PushupState } from "@/services/poseDetection";
 import { AlertCircle } from "lucide-react";
 
 // Use Global MediaPipe objects to bypass Vite production bundling errors
 declare global {
   interface Window {
-    Pose: any;
-    drawConnectors: any;
-    drawLandmarks: any;
-    POSE_CONNECTIONS: any;
+    Pose: {
+      new (config: { locateFile: (file: string) => string }): Pose;
+    };
+    drawConnectors: (
+      ctx: CanvasRenderingContext2D,
+      landmarks: LandmarkList,
+      connections: ConnectorList,
+      style?: { color?: string; lineWidth?: number }
+    ) => void;
+    drawLandmarks: (
+      ctx: CanvasRenderingContext2D,
+      landmarks: LandmarkList,
+      style?: { color?: string; lineWidth?: number; radius?: number }
+    ) => void;
+    POSE_CONNECTIONS: ConnectorList;
   }
 }
 
@@ -20,10 +36,16 @@ interface PoseTrackerProps {
   onCameraError?: (error: string) => void;
 }
 
-const PoseTracker: React.FC<PoseTrackerProps> = ({ onRepUpdate, onDepthUpdate, isActive, stream, onCameraError }) => {
+const PoseTracker: React.FC<PoseTrackerProps> = ({ 
+  onRepUpdate, 
+  onDepthUpdate, 
+  isActive, 
+  stream, 
+  onCameraError 
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const poseRef = useRef<any>(null);
+  const poseRef = useRef<Pose | null>(null);
   const repCountRef = useRef(0);
   const stateRef = useRef(PushupState.UP);
   const isActiveRef = useRef(isActive);
@@ -56,7 +78,7 @@ const PoseTracker: React.FC<PoseTrackerProps> = ({ onRepUpdate, onDepthUpdate, i
     const canvasCtx = canvasRef.current.getContext("2d");
     if (!canvasCtx) return;
 
-    const onResults = (results: any) => {
+    const onResults = (results: Results) => {
       if (!canvasRef.current || !canvasCtx || !videoRef.current) return;
       
       setIsInitializing(false);
@@ -70,7 +92,7 @@ const PoseTracker: React.FC<PoseTrackerProps> = ({ onRepUpdate, onDepthUpdate, i
       canvasCtx.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
 
       if (results.poseLandmarks) {
-        // Use Global Drawing Utils
+        // Use Global Drawing Utils with proper types
         if (window.drawConnectors && window.drawLandmarks && window.POSE_CONNECTIONS) {
           window.drawConnectors(canvasCtx, results.poseLandmarks, window.POSE_CONNECTIONS, {
             color: "#0ea5e9",
@@ -136,8 +158,9 @@ const PoseTracker: React.FC<PoseTrackerProps> = ({ onRepUpdate, onDepthUpdate, i
             setInitError("Tap to enable video pulse");
           }
         }
-      } catch (err: any) {
-        setInitError(err.message || "AI Pulse Desync");
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : "AI Pulse Desync";
+        setInitError(errorMessage);
         setIsInitializing(false);
       }
     };
