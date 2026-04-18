@@ -155,12 +155,15 @@ const PoseTracker: React.FC<PoseTrackerProps> = ({
             requestAnimationFrame(renderLoop);
           } catch (e) {
             console.error("Playback Blocked:", e);
-            setInitError("Tap to enable video pulse");
+            const msg = "Tap to enable video pulse";
+            setInitError(msg);
+            onCameraError?.(msg);
           }
         }
       } catch (err: unknown) {
         const errorMessage = err instanceof Error ? err.message : "AI Pulse Desync";
         setInitError(errorMessage);
+        onCameraError?.(errorMessage);
         setIsInitializing(false);
       }
     };
