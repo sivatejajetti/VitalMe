@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, CheckSquare, Target, User, Brain } from "lucide-react";
+import { LayoutDashboard, CheckSquare, Target, User, Brain, MessageCircle, BarChart3 } from "lucide-react";
 import { motion } from "framer-motion";
 
 const BottomNav = () => {
@@ -7,9 +7,9 @@ const BottomNav = () => {
   
   const tabs = [
     { to: "/dashboard", icon: LayoutDashboard, label: "Home" },
+    { to: "/chat", icon: MessageCircle, label: "AI Coach" },
     { to: "/tasks", icon: CheckSquare, label: "Tasks" },
     { to: "/workout", icon: Brain, label: "Trainer" },
-    { to: "/goals", icon: Target, label: "Goals" },
     { to: "/settings", icon: User, label: "Profile" },
   ];
 

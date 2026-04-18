@@ -23,27 +23,14 @@ class AIService {
     try {
       const apiKey = (process.env.GEMINI_API_KEY || "").trim();
       const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite-preview" });
       
-      // Try to get content with sequential model fallback
-      const models = ["gemini-1.5-flash", "gemini-pro", "gemini-1.0-pro"];
-      let lastError = null;
-
-      for (const modelName of models) {
-        try {
-          const model = genAI.getGenerativeModel({ model: modelName });
-          const prompt = `Health analysis: ${JSON.stringify(healthData)}. Provide 3 elite health insights.`;
-          const result = await model.generateContent(prompt);
-          return (await result.response).text();
-        } catch (e) {
-          lastError = e;
-          if (e.message.includes("404")) continue; // Try next model
-          throw e;
-        }
-      }
-      throw lastError;
+      const prompt = `SYSTEM: You are VitalMe, a cheerful Health Coach. TONE: Supportive and encouraging. RULE: Provide 3 friendly, scannable bullet points with emojis. DATA: ${JSON.stringify(healthData)}.`;
+      const result = await model.generateContent(prompt);
+      return (await result.response).text();
     } catch (error) {
       console.error('Insights Error:', error.message);
-      return "Analyzing your trends... Looking solid! Keep up the movement.";
+      return "**Welcome back!** 🌟 I'm ready to help you crush your health goals today!";
     }
   }
 
@@ -51,33 +38,27 @@ class AIService {
     try {
       const apiKey = (process.env.GEMINI_API_KEY || "").trim();
       const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite-preview" });
       
-      const models = ["gemini-1.5-flash", "gemini-pro", "gemini-1.0-pro"];
-      let lastError = null;
+      const fullHistory = history.slice(-10).map(h => ({
+        role: h.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: h.content }]
+      }));
 
-      for (const modelName of models) {
-        try {
-          const model = genAI.getGenerativeModel({ model: modelName });
-          const chat = model.startChat({
-            history: history.slice(-6).map(h => ({
-              role: h.role === 'assistant' ? 'model' : 'user',
-              parts: [{ text: h.content }]
-            })),
-          });
+      const firstUserIndex = fullHistory.findIndex(h => h.role === 'user');
+      const finalHistory = (firstUserIndex !== -1) ? fullHistory.slice(firstUserIndex) : [];
 
-          const systemPrompt = `Context: ${JSON.stringify(healthData)}. User: ${message}`;
-          const result = await chat.sendMessage(systemPrompt);
-          return (await result.response).text();
-        } catch (e) {
-          lastError = e;
-          if (e.message.includes("404")) continue;
-          throw e;
-        }
-      }
-      throw lastError;
+      const chat = model.startChat({ history: finalHistory });
+
+      const systemBrief = "SYSTEM: You are VitalMe, a cheerful and supportive AI Health Coach. TONE: Warm, human, and conversational. RULES: [1] Stay concise by default, but use multiple sentences if the detail is helpful. [2] DO NOT repeat the user's daily stats unless it is relevant to their question. [3] Be motivating and helpful with emojis. [4] Maintain a clean, scannable format.";
+      const context = healthData ? `DATA CONTEXT: ${JSON.stringify(healthData)}` : "";
+      const userPrompt = `${systemBrief}\n${context}\n\nUSER: ${message}`;
+      
+      const result = await chat.sendMessage(userPrompt);
+      return (await result.response).text();
     } catch (error) {
       console.error('Chat Error:', error.message);
-      return "I'm checking your pulse... Let's try that again!";
+      return "I'm optimizing your biometric stream... Let's try that again in a moment!";
     }
   }
 }

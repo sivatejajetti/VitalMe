@@ -12,6 +12,7 @@ import History from "@/pages/History";
 import Score from "@/pages/Score";
 import Workout from "@/pages/Workout";
 import Tasks from "@/pages/Tasks";
+import Chat from "@/pages/Chat";
 import Profile from "@/pages/Profile";
 import SettingsPage from "@/pages/SettingsPage";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
@@ -49,6 +50,7 @@ const App = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/tasks" element={<Tasks />} />
+            <Route path="/chat" element={<Chat />} />
             <Route path="/goals" element={<Goals />} />
             <Route path="/achievements" element={<Achievements />} />
             <Route path="/history" element={<History />} />

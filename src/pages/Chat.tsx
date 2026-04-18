@@ -3,6 +3,8 @@ import { useState, useRef, useEffect } from "react";
 import { Send, Bot, User } from "lucide-react";
 import { sendChatMessage, getHealthData } from "@/services/api";
 import { useQuery } from "@tanstack/react-query";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Message { role: "user" | "ai"; text: string }
 
@@ -30,13 +32,12 @@ const Chat = () => {
     setTyping(true);
 
     try {
-      // Map frontend roles to match Anthropic message structure if needed, or handle in service
       const history = messages.map(m => ({ 
-        role: m.role === 'ai' ? 'assistant' : 'user', 
+        role: (m.role === 'ai' ? 'assistant' : 'user') as "assistant" | "user", 
         content: m.text 
       }));
       
-      const response = await sendChatMessage(userMessage, healthData, []);
+      const response = await sendChatMessage(userMessage, healthData, history);
       setMessages((m) => [...m, { role: "ai", text: response.reply }]);
     } catch (error) {
       setMessages((m) => [...m, { role: "ai", text: "I'm having a bit of trouble connecting right now. Let's try again in a moment!" }]);
@@ -65,7 +66,13 @@ const Chat = () => {
                 ? "bg-primary text-primary-foreground rounded-br-lg" 
                 : "glass-card rounded-bl-lg text-foreground bg-surface-lowest/90 border border-white/20"
             }`}>
-              {m.text}
+              <div className="markdown-content">
+                {m.role === "ai" ? (
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.text}</ReactMarkdown>
+                ) : (
+                  m.text
+                )}
+              </div>
             </div>
           </motion.div>
         ))}

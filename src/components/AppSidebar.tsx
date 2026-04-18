@@ -8,6 +8,7 @@ import {
 
 const links = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/chat", label: "AI Coach", icon: MessageCircle },
   { to: "/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/tasks", label: "Tasks", icon: CheckSquare },
   { to: "/goals", label: "Goals", icon: Target },

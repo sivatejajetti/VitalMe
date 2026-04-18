@@ -66,7 +66,7 @@ class GoogleFitService {
   }
 
   async getHeartRate(startTime, endTime) {
-    // Attempt heart rate aggregate, return 0 if no source found
+    // Attempt heart rate aggregate, return null if no source found
     const buckets = await this.getAggregatedData(startTime, endTime, 'com.google.heart_rate.summary');
     let avgHeartRate = 0;
     let count = 0;
@@ -80,20 +80,22 @@ class GoogleFitService {
         });
       });
     });
-    return count > 0 ? Math.round(avgHeartRate / count) : 0;
+    return count > 0 ? Math.round(avgHeartRate / count) : null;
   }
 
   async getSleep(startTime, endTime) {
     const buckets = await this.getAggregatedData(startTime, endTime, 'com.google.sleep.segment');
     let totalSleepMillis = 0;
+    let count = 0;
     buckets.forEach(bucket => {
       bucket.dataset.forEach(dataset => {
         dataset.point.forEach(point => {
           totalSleepMillis += (point.endTimeNanos - point.startTimeNanos) / 1000000;
+          count++;
         });
       });
     });
-    return (totalSleepMillis / (1000 * 60 * 60)).toFixed(1); // Hours
+    return count > 0 ? (totalSleepMillis / (1000 * 60 * 60)).toFixed(1) : null;
   }
 
   /**
