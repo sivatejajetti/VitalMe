@@ -80,7 +80,7 @@ const AppSidebar = ({ open, onClose }: Props) => {
             <p className="text-[10px] text-muted-foreground/60 font-medium tracking-tight">
               Crafted with Excellence by
             </p>
-            <p className="text-xs font-bold text-foreground mt-0.5">Teja Jetti</p>
+            <p className="text-[10px] font-black text-foreground mt-1 uppercase tracking-[0.2em] opacity-80">TEJA JETTI & SANDEEP MANCHINASETTI</p>
           </div>
         </div>
       </motion.aside>

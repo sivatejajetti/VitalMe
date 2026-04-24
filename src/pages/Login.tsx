@@ -81,7 +81,7 @@ const Login = () => {
             
             <div className="flex flex-col items-center gap-1.5 opacity-60">
               <p className="text-[8px] text-muted-foreground uppercase tracking-[0.3em] font-black italic">Crafted for Excellence By</p>
-              <p className="text-xs font-black text-foreground/80 lowercase tracking-tight">Teja Jetti</p>
+              <p className="text-[10px] font-black text-foreground/80 uppercase tracking-[0.2em]">TEJA JETTI & SANDEEP MANCHINASETTI</p>
             </div>
           </div>
         </motion.div>
