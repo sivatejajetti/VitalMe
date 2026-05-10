@@ -22,10 +22,10 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(express.json());
-const frontendURL = process.env.FRONTEND_URL || 'https://vitalme-dashboard.vercel.app';
+const frontendURL = process.env.FRONTEND_URL || 'https://vitalme.vercel.app';
 
 app.use(cors({
-  origin: [frontendURL, 'https://vitalme-dashboard.vercel.app', 'http://localhost:5173', 'http://127.0.0.1:8080', 'http://127.0.0.1:5173'],
+  origin: [frontendURL, 'https://vitalme.vercel.app', 'http://localhost:5173', 'http://127.0.0.1:8080', 'http://127.0.0.1:5173'],
   credentials: true
 }));
 

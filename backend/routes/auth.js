@@ -56,11 +56,11 @@ router.get('/callback', async (req, res) => {
     
     console.log("Logged in user ID:", req.session.userId);
     // Include session info in URL for mobile app to capture
-    const redirectUrl = `${process.env.FRONTEND_URL || 'https://vitalme-dashboard.vercel.app'}/dashboard?auth_success=true&sid=${req.sessionID}`;
+    const redirectUrl = `${process.env.FRONTEND_URL || 'https://vitalme.vercel.app'}/dashboard?auth_success=true&sid=${req.sessionID}`;
     res.redirect(redirectUrl);
   } catch (error) {
     console.error('Auth Error:', error.message);
-    const errorUrl = `${process.env.FRONTEND_URL || 'https://vitalme-dashboard.vercel.app'}/login?error=auth_failed`;
+    const errorUrl = `${process.env.FRONTEND_URL || 'https://vitalme.vercel.app'}/login?error=auth_failed`;
     res.redirect(errorUrl);
   }
 });
