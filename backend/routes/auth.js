@@ -55,10 +55,10 @@ router.get('/callback', async (req, res) => {
     req.session.userId = payload.sub; // This is the unique google ID
     
     console.log("Logged in user ID:", req.session.userId);
-    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:8080'}/dashboard`);
+    res.redirect(`${process.env.FRONTEND_URL || 'https://vitalme-dashboard.vercel.app'}/dashboard`);
   } catch (error) {
     console.error('Auth Error:', error.message);
-    res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:8080'}/login?error=auth_failed`);
+    res.redirect(`${process.env.FRONTEND_URL || 'https://vitalme-dashboard.vercel.app'}/login?error=auth_failed`);
   }
 });
 

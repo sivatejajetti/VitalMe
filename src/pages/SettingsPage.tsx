@@ -51,7 +51,7 @@ const SettingsPage = () => {
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-2xl font-bold text-foreground">{profile?.name || "VitalMe User"}</h2>
             <button 
-              onClick={() => window.location.href = "http://localhost:3001/auth/google"}
+              onClick={() => window.location.href = "https://vitalme-backend.onrender.com/auth/google"}
               className="text-[10px] font-bold text-primary uppercase tracking-widest hover:underline"
             >
               Re-Sync Identity

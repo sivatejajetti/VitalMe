@@ -3,11 +3,12 @@ import { motion } from "framer-motion";
 import {
   LayoutDashboard, BarChart3, Brain, Target,
   MessageCircle, Trophy, Calendar, Heart, Settings, X,
-  CheckSquare, UserRound
+  CheckSquare, UserRound, Watch
 } from "lucide-react";
 
 const links = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/connect-watch", label: "Watch Link", icon: Watch },
   { to: "/chat", label: "AI Coach", icon: MessageCircle },
   { to: "/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/tasks", label: "Tasks", icon: CheckSquare },

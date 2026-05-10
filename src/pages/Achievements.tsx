@@ -7,7 +7,7 @@ const Achievements = () => {
   const { data: achievements, isLoading } = useQuery({
     queryKey: ["achievements"],
     queryFn: async () => {
-      const { data } = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/achievements`, { 
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL || 'https://vitalme-backend.onrender.com'}/api/achievements`, { 
         withCredentials: true 
       });
       return data;

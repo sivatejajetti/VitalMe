@@ -17,6 +17,7 @@ import Profile from "@/pages/Profile";
 import SettingsPage from "@/pages/SettingsPage";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfService from "@/pages/TermsOfService";
+import ConnectWatch from "@/pages/ConnectWatch";
 import NotFound from "@/pages/NotFound";
 
 import { ThemeProvider } from "@/components/theme-provider";
@@ -57,6 +58,7 @@ const App = () => {
             <Route path="/workout" element={<Workout />} />
             <Route path="/score" element={<Score />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/connect-watch" element={<ConnectWatch />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
           <Route path="*" element={<NotFound />} />
