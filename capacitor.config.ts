@@ -7,6 +7,13 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: 'https',
     hostname: 'vitalme-dashboard.vercel.app'
+  },
+  plugins: {
+    GoogleAuth: {
+      scopes: ["profile", "email"],
+      serverClientId: "YOUR_GOOGLE_CLIENT_ID_HERE",
+      forceCodeForRefreshToken: true
+    }
   }
 };
 

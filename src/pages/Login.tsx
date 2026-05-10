@@ -1,10 +1,36 @@
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 
 const Login = () => {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL || 'https://vitalme-backend.onrender.com';
+
+  const handleGoogleLogin = async () => {
+    const isNative = window.location.protocol === 'capacitor:';
+    
+    if (isNative) {
+      try {
+        const user = await GoogleAuth.signIn();
+        // Send the ID Token to the backend for verification
+        const response = await fetch(`${API_URL}/auth/google/native`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idToken: user.authentication.idToken })
+        });
+        const data = await response.json();
+        if (data.success) {
+          localStorage.setItem('vitalme_session', data.sid);
+          navigate('/dashboard');
+        }
+      } catch (error) {
+        console.error("Native Login Error:", error);
+      }
+    } else {
+      window.location.href = `${API_URL}/auth/google`;
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -41,7 +67,7 @@ const Login = () => {
           transition={{ delay: 0.6 }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={() => window.location.href = `${API_URL}/auth/google`}
+          onClick={handleGoogleLogin}
           className="w-full py-3 px-6 rounded-lg bg-primary text-primary-foreground font-semibold text-sm
             hover:brightness-110 transition-all duration-200 flex items-center justify-center gap-2"
         >

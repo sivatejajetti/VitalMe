@@ -70,6 +70,30 @@ router.get('/status', (req, res) => {
   res.json({ loggedIn: !!req.session.tokens });
 });
 
+// POST /auth/google/native (For Android App)
+router.post('/google/native', async (req, res) => {
+  const { idToken } = req.body;
+  const client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID);
+  
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    req.session.userId = payload.sub;
+    
+    res.json({ 
+      success: true, 
+      sid: req.sessionID,
+      message: "Native Login Successful" 
+    });
+  } catch (error) {
+    console.error('Native Auth Error:', error.message);
+    res.status(401).json({ success: false, message: "Invalid ID Token" });
+  }
+});
+
 // GET /auth/logout
 router.get('/logout', (req, res) => {
   req.session.destroy();
