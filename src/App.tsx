@@ -28,11 +28,22 @@ const queryClient = new QueryClient();
 
 const App = () => {
   useEffect(() => {
+    // Watch for deep links from Google Auth
+    import('@capacitor/app').then(({ App: CapApp }) => {
+      CapApp.addListener('appUrlOpen', (data: any) => {
+        const url = new URL(data.url);
+        const sid = url.searchParams.get('sid');
+        if (sid) {
+          localStorage.setItem('vitalme_session', sid);
+          window.location.href = '/dashboard';
+        }
+      });
+    });
+
     const observer = new MutationObserver(() => {
       console.log("Document element classes changed:", document.documentElement.className);
     });
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    console.log("Initial document classes:", document.documentElement.className);
     return () => observer.disconnect();
   }, []);
 
