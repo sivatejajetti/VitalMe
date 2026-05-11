@@ -3,15 +3,18 @@ import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 
+import { Capacitor } from "@capacitor/core";
+
 const Login = () => {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL || 'https://vitalme-backend.onrender.com';
 
   const handleGoogleLogin = async () => {
-    const isNative = window.location.protocol === 'capacitor:';
+    const isNative = Capacitor.isNativePlatform();
     
     if (isNative) {
       try {
+        console.log("Starting Native Google Login...");
         const user = await GoogleAuth.signIn();
         // Send the ID Token to the backend for verification
         const response = await fetch(`${API_URL}/auth/google/native`, {

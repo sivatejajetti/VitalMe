@@ -21,6 +21,7 @@
     "@capacitor/browser": "^8.0.3",
     "@capacitor/cli": "^7.6.2",
     "@capacitor/core": "^8.3.1",
+    "@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.4",
     "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^3.10.0",
     "@mediapipe/camera_utils": "^0.3.1675466862",
