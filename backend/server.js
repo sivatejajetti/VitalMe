@@ -42,14 +42,14 @@ class SupabaseStore extends session.Store {
       console.log("SupabaseStore: Getting session for sid:", sid);
       const { data, error } = await supabase.from('session').select('sess').eq('sid', sid).maybeSingle();
       if (error) {
-        console.error("SupabaseStore: Get error:", error);
-        return cb(error);
+        console.error("SupabaseStore: Get database error:", error);
+        return cb(null, null); // Fail-safe: treat as session not found instead of crashing
       }
       console.log("SupabaseStore: Get result:", data ? "Session Found" : "Session Not Found");
       cb(null, data ? data.sess : null);
     } catch (e) {
       console.error("SupabaseStore: Get exception:", e);
-      cb(e);
+      cb(null, null); // Fail-safe
     }
   }
   async set(sid, sess, cb) {
@@ -58,14 +58,14 @@ class SupabaseStore extends session.Store {
       const expire = sess.cookie.expires ? new Date(sess.cookie.expires) : new Date(Date.now() + 24 * 60 * 60 * 1000);
       const { error } = await supabase.from('session').upsert({ sid, sess, expire });
       if (error) {
-        console.error("SupabaseStore: Set error:", error);
-        return cb(error);
+        console.error("SupabaseStore: Set database error:", error);
+        return cb(null); // Fail-safe
       }
       console.log("SupabaseStore: Set session successfully.");
       cb(null);
     } catch (e) {
       console.error("SupabaseStore: Set exception:", e);
-      cb(e);
+      cb(null); // Fail-safe
     }
   }
   async destroy(sid, cb) {
@@ -73,13 +73,13 @@ class SupabaseStore extends session.Store {
       console.log("SupabaseStore: Destroying session for sid:", sid);
       const { error } = await supabase.from('session').delete().eq('sid', sid);
       if (error) {
-        console.error("SupabaseStore: Destroy error:", error);
-        return cb(error);
+        console.error("SupabaseStore: Destroy database error:", error);
+        return cb(null); // Fail-safe
       }
       cb(null);
     } catch (e) {
       console.error("SupabaseStore: Destroy exception:", e);
-      cb(e);
+      cb(null); // Fail-safe
     }
   }
 }
