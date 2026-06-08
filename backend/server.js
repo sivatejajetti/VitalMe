@@ -35,27 +35,52 @@ const isProd = process.env.NODE_ENV === 'production';
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
-const Store = session.Store;
-class SupabaseStore extends Store {
+class SupabaseStore extends session.Store {
   constructor() { super(); }
   async get(sid, cb) {
     try {
-      const { data } = await supabase.from('session').select('sess').eq('sid', sid).maybeSingle();
+      console.log("SupabaseStore: Getting session for sid:", sid);
+      const { data, error } = await supabase.from('session').select('sess').eq('sid', sid).maybeSingle();
+      if (error) {
+        console.error("SupabaseStore: Get error:", error);
+        return cb(error);
+      }
+      console.log("SupabaseStore: Get result:", data ? "Session Found" : "Session Not Found");
       cb(null, data ? data.sess : null);
-    } catch (e) { cb(e); }
+    } catch (e) {
+      console.error("SupabaseStore: Get exception:", e);
+      cb(e);
+    }
   }
   async set(sid, sess, cb) {
     try {
+      console.log("SupabaseStore: Setting session for sid:", sid);
       const expire = sess.cookie.expires ? new Date(sess.cookie.expires) : new Date(Date.now() + 24 * 60 * 60 * 1000);
-      await supabase.from('session').upsert({ sid, sess, expire });
+      const { error } = await supabase.from('session').upsert({ sid, sess, expire });
+      if (error) {
+        console.error("SupabaseStore: Set error:", error);
+        return cb(error);
+      }
+      console.log("SupabaseStore: Set session successfully.");
       cb(null);
-    } catch (e) { cb(e); }
+    } catch (e) {
+      console.error("SupabaseStore: Set exception:", e);
+      cb(e);
+    }
   }
   async destroy(sid, cb) {
     try {
-      await supabase.from('session').delete().eq('sid', sid);
+      console.log("SupabaseStore: Destroying session for sid:", sid);
+      const { error } = await supabase.from('session').delete().eq('sid', sid);
+      if (error) {
+        console.error("SupabaseStore: Destroy error:", error);
+        return cb(error);
+      }
       cb(null);
-    } catch (e) { cb(e); }
+    } catch (e) {
+      console.error("SupabaseStore: Destroy exception:", e);
+      cb(e);
+    }
   }
 }
 
