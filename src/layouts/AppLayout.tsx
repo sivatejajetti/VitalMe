@@ -13,18 +13,26 @@ const AppLayout = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const sid = urlParams.get('sid');
+    console.log("AppLayout: parsed sid from URL =", sid);
     if (sid) {
       localStorage.setItem('vitalme_session', sid);
+      console.log("AppLayout: Saved sid to localStorage.");
       // Clean up the URL search params for cleaner address bar
       const cleanUrl = window.location.pathname + window.location.hash;
       window.history.replaceState({}, document.title, cleanUrl);
     }
 
+    const savedSid = localStorage.getItem('vitalme_session');
+    console.log("AppLayout: current vitalme_session in localStorage =", savedSid);
+
     getAuthStatus()
       .then((status) => {
+        console.log("AppLayout: getAuthStatus response =", status);
         if (!status?.loggedIn) {
+          console.log("AppLayout: Not logged in. Redirecting to /login");
           navigate("/login");
         } else {
+          console.log("AppLayout: Logged in successfully. Clearing checkingAuth loader.");
           setCheckingAuth(false);
         }
       })
