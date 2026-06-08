@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">VitalMe</string>
-    <string name="title_activity_main">VitalMe</string>
-    <string name="package_name">com.vitalme.app</string>
-    <string name="custom_url_scheme">com.vitalme.app</string>
-</resources>

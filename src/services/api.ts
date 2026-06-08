@@ -8,6 +8,17 @@ const api = axios.create({
   withCredentials: true, // Crucial for session sessions
 });
 
+api.interceptors.request.use((config) => {
+  const sid = localStorage.getItem('vitalme_session');
+  if (sid) {
+    config.headers['x-session-id'] = sid;
+    config.headers['Authorization'] = `Bearer ${sid}`;
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
+
 export const getAuthStatus = async () => {
   const { data } = await api.get('/auth/status');
   return data;

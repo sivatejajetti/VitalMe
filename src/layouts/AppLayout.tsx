@@ -11,6 +11,15 @@ const AppLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sid = urlParams.get('sid');
+    if (sid) {
+      localStorage.setItem('vitalme_session', sid);
+      // Clean up the URL search params for cleaner address bar
+      const cleanUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+
     getAuthStatus()
       .then((status) => {
         if (!status?.loggedIn) {

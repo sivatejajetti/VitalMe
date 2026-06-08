@@ -59,6 +59,40 @@ class SupabaseStore extends Store {
   }
 }
 
+// Header-to-Cookie Session Bridge Middleware (Bypasses third-party cookie restrictions)
+app.use((req, res, next) => {
+  let sid = req.headers['x-session-id'] || req.query.sid;
+  
+  if (!sid && req.headers.authorization) {
+    const parts = req.headers.authorization.split(' ');
+    if (parts.length === 2 && parts[0] === 'Bearer') {
+      sid = parts[1];
+    }
+  }
+
+  if (sid) {
+    const secret = process.env.SESSION_SECRET || 'vitalme_default_secret';
+    const crypto = require('crypto');
+    const signed = sid + '.' + crypto
+      .createHmac('sha256', secret)
+      .update(sid)
+      .digest('base64')
+      .replace(/\=+$/, '');
+    
+    const cookieName = 'connect.sid';
+    const cookieValue = 's:' + signed;
+    
+    let cookies = req.headers.cookie || '';
+    if (cookies.includes(cookieName)) {
+      cookies = cookies.replace(new RegExp(`${cookieName}=[^;]+`), `${cookieName}=${encodeURIComponent(cookieValue)}`);
+    } else {
+      cookies = cookies ? `${cookies}; ${cookieName}=${encodeURIComponent(cookieValue)}` : `${cookieName}=${encodeURIComponent(cookieValue)}`;
+    }
+    req.headers.cookie = cookies;
+  }
+  next();
+});
+
 app.use(session({
   store: new SupabaseStore(),
   secret: process.env.SESSION_SECRET || 'vitalme_default_secret',

@@ -114,7 +114,10 @@ const SettingsPage = () => {
 
         <motion.button
           whileTap={{ scale: 0.95 }}
-          onClick={() => navigate("/login")}
+          onClick={() => {
+            localStorage.removeItem("vitalme_session");
+            navigate("/login");
+          }}
           className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-destructive/10 text-destructive text-sm font-bold hover:bg-destructive/20 transition-all border border-destructive/10"
         >
           <LogOut className="w-4 h-4" />
