@@ -85,20 +85,39 @@ class AIService {
   static async chat(message, healthData, history = [], accessToken) {
     try {
       // Map chat history to Gemini structure
-      const contents = history.slice(-10).map(h => ({
+      const rawContents = history.slice(-10).map(h => ({
         role: h.role === 'assistant' ? 'model' : 'user',
         parts: [{ text: h.content }]
       }));
 
-      // Ensure the history slice starts with a user message
-      const firstUserIndex = contents.findIndex(h => h.role === 'user');
-      let finalContents = (firstUserIndex !== -1) ? contents.slice(firstUserIndex) : [];
-
+      // Append current context and user message
       const context = healthData ? `DATA CONTEXT: ${JSON.stringify(healthData)}\n\n` : "";
-      finalContents.push({
+      rawContents.push({
         role: "user",
         parts: [{ text: `${context}USER: ${message}` }]
       });
+
+      // Filter to ensure strict alternation (user -> model -> user -> model) and starts with user
+      let finalContents = [];
+      let lastRole = null;
+      
+      const firstUserIndex = rawContents.findIndex(c => c.role === 'user');
+      const filteredRaw = firstUserIndex !== -1 ? rawContents.slice(firstUserIndex) : rawContents;
+
+      for (const msg of filteredRaw) {
+        if (msg.role !== lastRole) {
+          finalContents.push(msg);
+          lastRole = msg.role;
+        } else {
+          // Merge consecutive messages of the same role
+          if (finalContents.length > 0) {
+            finalContents[finalContents.length - 1].parts[0].text += "\n" + msg.parts[0].text;
+          } else {
+            finalContents.push(msg);
+            lastRole = msg.role;
+          }
+        }
+      }
 
       const payload = {
         systemInstruction: {
