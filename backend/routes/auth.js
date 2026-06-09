@@ -17,7 +17,7 @@ router.get('/google', (req, res) => {
     'https://www.googleapis.com/auth/fitness.sleep.read',
     'https://www.googleapis.com/auth/user.birthday.read',
     'https://www.googleapis.com/auth/user.gender.read',
-    'https://www.googleapis.com/auth/generative-language',
+    'https://www.googleapis.com/auth/generative-language.retriever',
     'profile',
     'email'
   ];
