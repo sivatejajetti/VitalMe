@@ -52,11 +52,10 @@ export interface HistoryItem {
 
 export interface HealthScore {
   score: number;
-  status: "Excellent" | "Good" | "Fair" | "Critical";
   breakdown: {
-    activity: number;
-    consistency: number;
-    vitality: number;
+    steps: number;
+    sleep: number;
+    heartRate: number;
   };
 }
 
