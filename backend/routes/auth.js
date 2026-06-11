@@ -56,6 +56,21 @@ router.get('/callback', async (req, res) => {
     req.session.userId = payload.sub; // This is the unique google ID
     
     console.log("Logged in user ID:", req.session.userId);
+
+    // Explicitly save the session to the store (Supabase) and await completion
+    // to prevent the frontend /status race condition.
+    await new Promise((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session Save Error:", err);
+          reject(err);
+        } else {
+          console.log("Session Saved Successfully before redirect.");
+          resolve();
+        }
+      });
+    });
+
     // Include session info in URL for mobile app to capture
     const redirectUrl = `${process.env.FRONTEND_URL || 'https://vitalme.vercel.app'}/dashboard?auth_success=true&sid=${req.sessionID}`;
     res.redirect(redirectUrl);

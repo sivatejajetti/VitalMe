@@ -135,6 +135,65 @@ app.use(session({
 // Health Check
 app.get('/health', (req, res) => res.json({ status: "OK", timestamp: new Date() }));
 
+// Temporary Database/Session Diagnostics Route
+app.get('/auth/diagnose-db', async (req, res) => {
+  try {
+    const results = {};
+    results.url_configured = !!process.env.SUPABASE_URL;
+    results.key_configured = !!process.env.SUPABASE_KEY;
+    results.url_value = process.env.SUPABASE_URL ? process.env.SUPABASE_URL.substring(0, 20) + '...' : null;
+    
+    if (process.env.SUPABASE_URL && process.env.SUPABASE_KEY) {
+      // Test 1: Simple SELECT limit 1
+      const { data: selectData, error: selectError } = await supabase
+        .from('session')
+        .select('*')
+        .limit(1);
+      
+      results.session_select = {
+        success: !selectError,
+        error: selectError ? {
+          message: selectError.message,
+          code: selectError.code,
+          details: selectError.details,
+          hint: selectError.hint
+        } : null,
+        data_count: selectData ? selectData.length : 0
+      };
+
+      // Test 2: Try an upsert of a test session
+      const testSid = 'test-diagnose-' + Date.now();
+      const testSess = { cookie: { expires: new Date(Date.now() + 60000) }, test: true };
+      const testExpire = new Date(Date.now() + 60000);
+      
+      const { error: upsertError } = await supabase
+        .from('session')
+        .upsert({ sid: testSid, sess: testSess, expire: testExpire });
+
+      results.session_upsert = {
+        success: !upsertError,
+        error: upsertError ? {
+          message: upsertError.message,
+          code: upsertError.code,
+          details: upsertError.details,
+          hint: upsertError.hint
+        } : null
+      };
+
+      if (!upsertError) {
+        // Clean up
+        await supabase.from('session').delete().eq('sid', testSid);
+      }
+    } else {
+      results.error = "Supabase env vars are missing";
+    }
+
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ error: error.message, stack: error.stack });
+  }
+});
+
 // API Routes
 app.use('/auth', authRoutes);
 app.use('/api/health', require('./routes/health'));
